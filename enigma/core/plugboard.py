@@ -25,17 +25,19 @@ class Plugboard:
         """
         pairs_cpy: list[str] = pairs.copy()
         for pair in pairs_cpy:
-            # checks for invalid pair: contains characters other than letters
-            if pair[0] not in constants.ALPHABET or pair[1] not in constants.ALPHABET:
-                raise ValueError(f"Invalid pair: {pair}. Pairs can contain only letters.")
+            pair = pair.upper()
             # checks for invalid pair: length different from 2
             if len(pair) != 2:
-                raise ValueError(f"Invalid pair: {pair}. Pairs must contain exactly two letters.")
+                raise ValueError(f"Invalid pair '{pair}'. Pairs must contain exactly two letters.")
+            # checks for invalid pair: contains characters other than letters
+            if pair[0] not in constants.ALPHABET or pair[1] not in constants.ALPHABET:
+                raise ValueError(f"Invalid pair '{pair}'. Pairs can contain only letters.")
             pair = pair.upper()
             # checks for invalid pair: letter already registered in the reflector
             # noinspection DuplicatedCode
             if pair[0] in self._input or pair[1] in self._input or pair[0] in self._output or pair[1] in self._output:
-                raise ValueError(f"Pairs cannot contain duplicates. A letter must appear only once per configuration.")
+                raise ValueError(f"Invalid pair '{pair}'."
+                                 f" Pairs cannot contain duplicates. A letter must appear only once per configuration.")
             self._input += pair
             self._output += pair[1] + pair[0]
 
@@ -46,9 +48,10 @@ class Plugboard:
         :param letter: letter to reflect. Only letters that belong to the 26-letters alphabet are allowed
         :return: reflected letter
         """
-        if letter not in constants.ALPHABET:
-            raise ValueError(f"Invalid letter {letter}. Only letter that belong to the 26-letters alphabet are allowed")
         letter = letter.upper()
+        if letter not in constants.ALPHABET:
+            raise ValueError(
+                f"Invalid letter '{letter}'. Only letter that belong to the 26-letters alphabet are allowed")
         letter_index: int = self._input.find(letter)
         if letter_index == -1:
             return letter

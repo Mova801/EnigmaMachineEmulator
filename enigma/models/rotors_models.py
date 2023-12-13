@@ -1,3 +1,6 @@
+"""Module containing some rotor models."""
+
+
 # ROTORS MODELS
 class RotorProperties:
     model: str

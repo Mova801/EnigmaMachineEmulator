@@ -1,3 +1,4 @@
+"""Module containing some reflector models."""
 # REFLECTORS MODELS
 ReflectorProperties = list[str]
 ReflectorBProperties: list[str] = ["ay", "br", "cu", "dh", "eq", "fs", "gl", "ip", "jx", "kn", "mo", "tz", "vw"]

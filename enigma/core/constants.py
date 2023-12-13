@@ -1,7 +1,7 @@
 # enigma machine constants
 ROTOR_NUMBER: int = 3
 
-# ALPHABET
+# alphabet constants
 ALPHABET_LENGTH: int = 26
 ALPHABET: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

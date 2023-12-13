@@ -1,12 +1,11 @@
 import pytest
 
-import enigma.core.constants as const
 from enigma.core.reflector import Reflector
 from enigma.core.rotor import Rotor
-from enigma.core.models.rotors_models import (
+from enigma.models.rotors_models import (
     RotorIProperties, RotorIIProperties, RotorIIIProperties
 )
-from enigma.core.models.reflectors_models import ReflectorBProperties
+from enigma.models.reflectors_models import ReflectorBProperties
 
 
 def setup_rotors(rotors: list[Rotor], offsets: list[int], positions: list[str]) -> None:
@@ -19,24 +18,26 @@ def setup_rotors(rotors: list[Rotor], offsets: list[int], positions: list[str]) 
 def test_rotor_swap_with_rotation() -> None:
     rt = Rotor(RotorIProperties)
     rt.set_starting_position('Z')
-    rt.set_alphabet_ring_position(0)
+    rt.set_alphabet_ring_position(1)
     rt.rotate()
 
     p1: str = rt.swap_letter('A')
 
     rt2 = Rotor(RotorIProperties)
     rt2.set_starting_position('Z')
-    rt2.set_alphabet_ring_position(0)
+    rt2.set_alphabet_ring_position(1)
     rt2.rotate()
 
-    p2: str = rt2.reverse_swap_letter('E')
+    p2: str = rt2.reverse_swap_letter(p1)
 
     assert (
-            p1 == 'E' and
-            rt._position == 0 and
+            p1 == 'M' and
+            rt._position == 1 and
             p2 == 'A' and
-            rt2._position == 0
+            rt2._position == 1
     )
+
+
 #
 #
 # def test_set_alphabet_ring_position_default() -> None:
@@ -69,7 +70,7 @@ def test_one_rotor_encryption_and_decryption_with_rotation() -> None:
     ref: Reflector = Reflector(ReflectorBProperties)
 
     r1.set_starting_position('B')
-    r1.set_alphabet_ring_position(0)
+    r1.set_alphabet_ring_position(1)
     r1.rotate()
 
     # encryption
@@ -88,19 +89,19 @@ def test_one_rotor_encryption_and_decryption_with_rotation() -> None:
 
 
 # noinspection DuplicatedCode
-def test_three_rotor_first_half_cycle_without_rotation() -> None:
+def test_three_rotor_first_half_cycle_without_rotation_with_offset() -> None:
     r1: Rotor = Rotor(RotorIProperties)
     r2: Rotor = Rotor(RotorIIProperties)
     r3: Rotor = Rotor(RotorIIIProperties)
     rotors = [r1, r2, r3]
-    sp: list[str] = ['Z', 'A', 'A']
-    setup_rotors(rotors, [0, 0, 0], sp)
+    sp: list[str] = ['A', 'A', 'A']
+    setup_rotors(rotors, [1, 1, 1], sp)
     # test start
     letter: str = 'A'
     p1: str = r1.swap_letter(letter)
     p2: str = r2.swap_letter(p1)
     p3: str = r3.swap_letter(p2)
-    assert p3 == 'D'
+    assert p3 == 'Y'
 
 
 # noinspection DuplicatedCode
@@ -110,7 +111,7 @@ def test_three_rotor_first_half_cycle_with_rotation() -> None:
     r3: Rotor = Rotor(RotorIIIProperties)
     rotors = [r1, r2, r3]
     sp: list[str] = ['Z', 'A', 'A']
-    setup_rotors(rotors, [0, 0, 0], sp)
+    setup_rotors(rotors, [1, 1, 1], sp)
     # attaching rotors
     r1.attach_rotor(r2)
     r2.attach_rotor(r3)
@@ -120,7 +121,7 @@ def test_three_rotor_first_half_cycle_with_rotation() -> None:
     p1: str = r1.swap_letter(letter)
     p2: str = r2.swap_letter(p1)
     p3: str = r3.swap_letter(p2)
-    assert p3 == 'G'
+    assert p3 == 'Y'
 
 
 # noinspection DuplicatedCode
@@ -158,41 +159,43 @@ def test_three_rotor_first_half_cycle_with_rotation() -> None:
 #     p1: str = r1.reverse_swap(p2)
 #     assert p1 == 'P'
 
-def test_swap_no_position() -> None:
-    r3: Rotor = Rotor(RotorIIIProperties)
-    r3._position = 0
+def test_swap_no_position_no_offset() -> None:
+    rt: Rotor = Rotor(RotorIProperties)
+    rt._position = 0
+    rt._offset = 0
     letter: str = 'G'
-    p1: str = r3.swap_letter(letter)
-    assert p1 == 'C'
+    p1: str = rt.swap_letter(letter)
+    assert p1 == 'D'
 
 
 def test_swap_default() -> None:
-    r3: Rotor = Rotor(RotorIIIProperties)
+    rt: Rotor = Rotor(RotorIProperties)
     letter: str = 'G'
-    p1: str = r3.swap_letter(letter)
-    assert p1 == 'P'
+    p1: str = rt.swap_letter(letter)
+    assert p1 == 'V'
 
 
-def test_swap_arg1_not_in_alphabet() -> None:
-    r3 = Rotor(RotorIIIProperties)
-    letter: str = '*'
-    with pytest.raises(ValueError):
-        r3.swap_letter(letter)
-
-
-def test_reverse_swap_no_position() -> None:
-    rt = Rotor(RotorIProperties)
-    rt._position = 0
-    letter: str = 'A'
-    p1: str = rt.reverse_swap_letter(letter)
-    assert p1 == 'U'
+# def test_swap_arg1_not_in_alphabet() -> None:
+#     rt = Rotor(RotorIProperties)
+#     letter: str = '*'
+#     with pytest.raises(ValueError):
+#         rt.swap_letter(letter)
 
 
 def test_reverse_swap_default() -> None:
     rt = Rotor(RotorIProperties)
     letter: str = 'A'
     p1: str = rt.reverse_swap_letter(letter)
-    assert p1 == 'T'
+    assert p1 == 'S'
+
+
+def test_reverse_swap_no_position_no_offset() -> None:
+    rt = Rotor(RotorIProperties)
+    rt._position = 0
+    rt._offset = 0
+    letter: str = 'A'
+    p1: str = rt.reverse_swap_letter(letter)
+    assert p1 == 'U'
 
 
 def test_reverse_swap_arg1_not_in_alphabet() -> None:

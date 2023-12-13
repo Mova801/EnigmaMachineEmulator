@@ -1,9 +1,8 @@
 from enigma.core.plugboard import Plugboard
 from enigma.core.reflector import Reflector
 from enigma.core.rotor import Rotor, RotorFlags
-from enigma.core.models import reflectors_models
-from enigma.core import constants
-from enigma.core import exceptions
+from enigma.models import reflectors_models
+from enigma.core import constants, exceptions
 
 
 class EnigmaMachine:
@@ -37,7 +36,12 @@ class EnigmaMachine:
         self._plugboard = Plugboard()
 
     def set_plugboard(self, pairs: list[str]) -> None:
-        ...
+        """
+        Set the plugboard pairs of the Enigma Machine.
+        :param pairs: pairs of letters to scramble
+        :return: None
+        """
+        self._plugboard.set_plugboard(pairs)
 
     def set_rotors(self, rotors: list[Rotor]) -> None:
         """
@@ -57,22 +61,42 @@ class EnigmaMachine:
         self._rotors = tuple(*reversed(rotors))
 
     def set_rotors_position(self, positions: tuple[str, ...]) -> None:
+        """
+        Set the starting positions of the rotors of the Enigma Machine.
+        :param positions: starting positions to set in the rotors
+        :return: None
+        """
         if len(positions) != constants.ROTOR_NUMBER:
             raise ValueError(
                 f"The number of offsets must be equal to rotors number {constants.ROTOR_NUMBER}, not {len(positions)}")
         [self._rotors[i].set_starting_position(pos) for i, pos in enumerate(reversed(positions))]
 
     def set_alphabet_ring_position(self, offsets: tuple[int, ...]) -> None:
+        """
+        Set the alphabet ring position for each rotor of the Enigma Machine.
+        :param offsets: offsets to set in the rotors
+        :return: None
+        """
         if len(offsets) != constants.ROTOR_NUMBER:
             raise ValueError(
                 f"The number of offsets must be equal to rotors number {constants.ROTOR_NUMBER}, not {len(offsets)}")
         [self._rotors[i].set_alphabet_ring_position(offset) for i, offset in enumerate(reversed(offsets))]
 
     def set_reflector(self, model: reflectors_models.ReflectorProperties) -> None:
+        """
+        Set a reflector of the given model in Enigma Machine settings.
+        :param model: reflector model to use
+        :return: None
+        """
         if not isinstance(model, reflectors_models.ReflectorProperties):
             self._reflector = Reflector(model)
 
     def process_text(self, text: str) -> str:
+        """
+        Processes a text string with the current Enigma Machine settings and returns the encrypted text.
+        :param text: text to process
+        :return: encrypted text
+        """
         # check if all rotors are attached
         for i in range(constants.ROTOR_NUMBER - 1):
             rotor = self._rotors[i]

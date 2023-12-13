@@ -2,10 +2,9 @@
 from rich.console import Console
 from rich.traceback import install
 
-from enigma.core.models.reflectors_models import ReflectorBProperties
-from enigma.core.models.rotors_models import RotorIProperties, RotorIIProperties, RotorIIIProperties
+from enigma.models import rotors_models, reflectors_models
 from enigma.core.reflector import Reflector
-from enigma.core.rotor import Rotor
+from enigma.core.rotor import Rotor, RotorFlags
 from enigma.enigma import EnigmaMachine
 
 install()  # better looking error print
@@ -37,7 +36,7 @@ def triplet_rotor_permutation(rotors: list[Rotor], ref: Reflector, letter: str) 
 
 def operate(rotors: list[Rotor], text: str, ) -> str:
     ans: str = ""
-    ref = Reflector(ReflectorBProperties)
+    ref = Reflector(reflectors_models.ReflectorBProperties)
     for letter in text:
         rotors[0].rotate()
         res: str
@@ -54,56 +53,9 @@ def operate(rotors: list[Rotor], text: str, ) -> str:
 
 def main() -> None:
     console = Console()
-
-    # sender1 = Rotor(RotorIProperties)
-    # sender2 = Rotor(RotorIProperties)
-    # sender3 = Rotor(RotorIProperties)
-    # receiver1 = Rotor(RotorIProperties)
-    # receiver2 = Rotor(RotorIProperties)
-    # receiver3 = Rotor(RotorIProperties)
-    #
-    # initial_text: str = 'A'
-    #
-    # sender1.set_alphabet_ring_position(1)
-    # sender1.set_starting_position('A')
-    # sender2.set_alphabet_ring_position(1)
-    # sender2.set_starting_position('A')
-    # sender3.set_alphabet_ring_position(1)
-    # sender3.set_starting_position('A')
-    #
-    # receiver1.set_alphabet_ring_position(1)
-    # receiver1.set_starting_position('A')
-    # receiver2.set_alphabet_ring_position(1)
-    # receiver2.set_starting_position('A')
-    # receiver3.set_alphabet_ring_position(1)
-    # receiver3.set_starting_position('A')
-    #
-    # sender_out: str = operate([sender1, sender2, sender3], initial_text)
-    # receiver_out = operate([receiver1, receiver2, receiver3], sender_out)
-
-    r1 = Rotor(RotorIProperties)
-    r2 = Rotor(RotorIIProperties)
-    r3 = Rotor(RotorIIIProperties)
-    initial_text: str = 'hello'
-
-    arp: tuple[int, int, int] = (1, 1, 1)
-    sp: tuple[str, str, str] = ('A', 'A', 'A')
-
-    # Sender Enigma Machine
-    sender: EnigmaMachine = EnigmaMachine((r1, r2, r3))  # init
-    sender.set_alphabet_ring_position(arp)  # setting alphabet ring pos
-    sender.set_rotors_position(sp)  # setting initial rotor pos
-    sender_out: str = sender.process_text(initial_text)  # process initial text
-
-    # Receiver Enigma Machine
-    receiver: EnigmaMachine = EnigmaMachine((r1, r2, r3))  # init
-    receiver.set_alphabet_ring_position(arp)  # setting alphabet ring pos
-    receiver.set_rotors_position(sp)  # setting initial rotor pos
-    receiver_out: str = sender.process_text(sender_out)  # process encrypted text
-
-    console.print(f"Sender text: {initial_text.upper()}")
-    console.print(f"Encrypted text: {sender_out}")
-    console.print(f"Decrypted result: {receiver_out} ({receiver_out.upper() == initial_text.upper()})")
+    # ...
+    console.print('Hello World!', style='bold green')
+    input()
 
 
 if __name__ == '__main__':
