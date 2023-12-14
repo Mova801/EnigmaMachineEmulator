@@ -1,13 +1,14 @@
 # Script created by Marte on 09/12/2023
 from rich.traceback import install
 
-from src import cmd_emulator
+from src.emulator import EnigmaEmulator
 
 install()  # better looking error print
 
 
 def main() -> None:
-    cmd_emulator.emu()
+    emu = EnigmaEmulator()
+    emu.run()
 
 
 if __name__ == '__main__':

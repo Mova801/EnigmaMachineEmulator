@@ -1,6 +1,6 @@
 import enum
 
-from typing_extensions import Self
+from typing import Self
 
 from ..models import rotors_models as models
 import constants
