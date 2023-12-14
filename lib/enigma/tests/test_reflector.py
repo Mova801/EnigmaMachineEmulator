@@ -1,7 +1,7 @@
 import pytest
 
-from enigma.core.reflector import Reflector
-from enigma.models.reflectors_models import ReflectorBProperties
+from ..core.reflector import Reflector
+from ..models.reflectors_models import ReflectorBProperties
 
 
 def test_set_pairs_default() -> None:

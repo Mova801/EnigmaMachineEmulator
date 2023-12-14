@@ -1,5 +1,5 @@
-from enigma.core import constants
-import enigma.models.reflectors_models as models
+import constants
+from ..models import reflectors_models as models
 
 
 class Reflector:

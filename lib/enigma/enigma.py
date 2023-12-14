@@ -1,8 +1,11 @@
-from enigma.core.plugboard import Plugboard
-from enigma.core.reflector import Reflector
-from enigma.core.rotor import Rotor, RotorFlags
-from enigma.models import reflectors_models
-from enigma.core import constants, exceptions
+from typing_extensions import Any
+
+from core import constants, exceptions
+from core.plugboard import Plugboard
+from core.reflector import Reflector
+from core.rotor import Rotor, RotorFlags
+from models import reflectors_models
+from models import rotors_models
 
 
 class EnigmaMachine:
@@ -20,17 +23,27 @@ class EnigmaMachine:
     _rotors: tuple[Rotor, ...]
     _reflector: Reflector
 
-    def __init__(self, rotors: tuple[Rotor, ...],
-                 reflector_model: reflectors_models.ReflectorProperties = None) -> None:
-        if rotors is None:
+    def __init__(self, **kwargs: Any) -> None:
+        rotors: tuple[Rotor, ...] = kwargs.get('rotors', tuple())
+        rot_models: tuple[rotors_models.RotorProperties] = kwargs.get('rotors_models', tuple())
+        if len(rotors) == 0 or len(rotors) != constants.ROTOR_NUMBER:
             raise exceptions.MissingRotorsException()
-        self._rotors = tuple(reversed(rotors))
+        elif len(rotors) != 0:
+            self._rotors = tuple(reversed(rotors))
+        elif len(rot_models) == 0 or len(rot_models) != constants.ROTOR_NUMBER:
+            raise exceptions.MissingRotorsPropertiesException()
+        else:
+            self._rotors = tuple([Rotor(prop) for prop in reversed(rot_models)])
+
+        reflector_model: reflectors_models.ReflectorProperties = kwargs.get('reflectors_model',
+                                                                            reflectors_models.ReflectorBProperties)
+
         for i in range(constants.ROTOR_NUMBER - 1):
             rotor = self._rotors[i]
             next_rotor = self._rotors[i + 1]
             rotor.attach_rotor(next_rotor)
         if reflector_model is None:
-            self._reflector = Reflector(reflectors_models.ReflectorBProperties)
+            self._reflector = Reflector()
         else:
             self._reflector = Reflector(reflector_model)
         self._plugboard = Plugboard()

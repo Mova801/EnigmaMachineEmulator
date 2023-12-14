@@ -2,8 +2,8 @@ import enum
 
 from typing_extensions import Self
 
-import enigma.models.rotors_models as models
-from enigma.core import constants
+from ..models import rotors_models as models
+import constants
 
 
 class RotorFlags(enum.IntEnum):

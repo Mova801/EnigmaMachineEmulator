@@ -22,7 +22,24 @@ class MissingRotorsException(EnigmaMachineEmulatorException):
 
     def __init__(self, msg: str = "", val: Any = None, *args) -> None:
         super().__init__(*args)
-        self.message: str = "rotors absent in constructor."
+        self.message: str = "rotors absent in constructor. You can either specify rotor or rotors properties."
+        self.value = None
+        if msg:
+            self.message = msg
+        if val is not None:
+            self.value = val
+
+    def __str__(self) -> str:
+        return self.message + ' ' + self.value
+
+
+class MissingRotorsPropertiesException(EnigmaMachineEmulatorException):
+    """Exception raised when no rotors are passed in the constructor."""
+
+    def __init__(self, msg: str = "", val: Any = None, *args) -> None:
+        super().__init__(*args)
+        self.message: str = ("rotors properties absent in constructor. "
+                             "You can either specify rotor or rotors properties.")
         self.value = None
         if msg:
             self.message = msg

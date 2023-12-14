@@ -1,6 +1,6 @@
 import pytest
 
-from enigma.core.plugboard import Plugboard
+from ..core.plugboard import Plugboard
 
 
 def test_set_plugboard_default() -> None:

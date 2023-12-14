@@ -1,4 +1,4 @@
-from enigma.core import constants
+import constants
 
 
 class Plugboard:
