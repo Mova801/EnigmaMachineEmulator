@@ -1,18 +1,21 @@
 from rich.console import Console
+from rich.prompt import Prompt
 
 from src.states.main_screen import MainScreen
 from src.states.state import State
 
 
-class EnigmaEmulator:
+class CmdApplication:
     """"""
     _status_LIFO_stack: State
     _console: Console
+    _prompt: Prompt
     _running: bool
 
     def __init__(self) -> None:
         self._console = Console()
-        self._status_LIFO_stack = MainScreen(self._console)
+        self._prompt = Prompt()
+        self._status_LIFO_stack = MainScreen(self._console, self._prompt)
         self._running = True
 
     def run(self) -> None:

@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import Self
 
+from ..commands.command import Command
+
 
 class State[T](ABC):
     """
     """
     _stack: list[T]
+    _commands: list[Command]
 
     def __getitem__(self, index: int) -> Self:
         return self._stack[index % len(self._stack)]
