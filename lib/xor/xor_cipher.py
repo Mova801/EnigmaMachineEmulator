@@ -1,10 +1,10 @@
 import string
 
+
 # TODO: fix
 
 def xor_letter(letter: str, key: str) -> str:
     """
-
     :param letter:
     :param key:
     :return:
@@ -14,7 +14,6 @@ def xor_letter(letter: str, key: str) -> str:
 
 def xor_cipher(text: str, cipher_key: str) -> str:
     """
-
     :param text:
     :param cipher_key:
     :return:
