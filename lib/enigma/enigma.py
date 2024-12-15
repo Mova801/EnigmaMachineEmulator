@@ -1,4 +1,4 @@
-from typing_extensions import Any
+from typing import Any
 
 from core import constants, exceptions
 from core.plugboard import Plugboard
@@ -24,6 +24,7 @@ class EnigmaMachine:
     _reflector: Reflector
 
     def __init__(self, **kwargs: Any) -> None:
+        # rotors init
         rotors: tuple[Rotor, ...] = kwargs.get('rotors', tuple())
         rot_models: tuple[rotors_models.RotorProperties] = kwargs.get('rotors_models', tuple())
         if len(rotors) == 0 or len(rotors) != constants.ROTOR_NUMBER:
@@ -34,18 +35,17 @@ class EnigmaMachine:
             raise exceptions.MissingRotorsPropertiesException()
         else:
             self._rotors = tuple([Rotor(prop) for prop in reversed(rot_models)])
-
-        reflector_model: reflectors_models.ReflectorProperties = kwargs.get('reflectors_model',
-                                                                            reflectors_models.ReflectorBProperties)
-
         for i in range(constants.ROTOR_NUMBER - 1):
             rotor = self._rotors[i]
             next_rotor = self._rotors[i + 1]
             rotor.attach_rotor(next_rotor)
-        if reflector_model is None:
-            self._reflector = Reflector()
-        else:
-            self._reflector = Reflector(reflector_model)
+        # reflector init
+        reflector_model: reflectors_models.ReflectorProperties = kwargs.get('reflectors_model',
+                                                                            reflectors_models.ReflectorBProperties)
+        # if reflector_model is None:
+        #     self._reflector = Reflector()
+        # else:
+        self._reflector = Reflector(reflector_model)
         self._plugboard = Plugboard()
 
     def set_plugboard(self, pairs: list[str]) -> None:

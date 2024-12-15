@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% block title %}EMS - Home{% endblock %}
+{% block header %}
+    <h3 id="messages" class="text-center font-raleway border-bottom mx-auto w-25" style="margin-top: 6%"></h3>
+{% endblock %}
+{% block content %}
+    {% if method == 'GET' %}
+        <div id="xfish" class="font-raleway">
+            {#            <h3 class="border-bottom text-center mt-5 w-25 mx-auto">Enigma Machine Simulator</h3>#}
+            <form method="post" action="{{ url_for('main.index') }}"
+                  class="d-flex flex-column justify-content-center mt-5 w-75 mx-auto">
+                <div class="d-flex">
+                    <div class="d-flex flex-column">
+                        <div class="input-group mx-auto w-50 border-bottom">
+                            <label class="form-label border-bottom">
+                                REFLECTOR
+                                <select class="form-select rounded-0" id="reflector" required>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="input-group mx-auto w-50 border-bottom">
+                            <label class="me-3 form-label">
+                                ROTOR 1
+                                <select class="form-select rounded-0" id="rotor1" required>
+                                    <option value="1">I</option>
+                                    <option value="2">II</option>
+                                    <option value="3">III</option>
+                                    <option value="4">IV</option>
+                                    <option value="5">V</option>
+                                </select>
+                            </label>
+                            <label class="me-3 form-label w-25">
+                                POSITION
+                                <input type="range" class="form-range" min="0" max="26" id="position-1" required>
+                            </label>
+                            <label class="me-3 form-label w-25">
+                                RING
+                                <input type="range" class="form-range" min="0" max="26" id="ring-1" required>
+                            </label>
+                        </div>
+                        <div class="input-group mx-auto w-50 border-bottom">
+                            <label class="me-3 form-label">
+                                ROTOR 2
+                                <select class="form-select rounded-0" id="rotor-2" required>
+                                    <option value="1">I</option>
+                                    <option value="2">II</option>
+                                    <option value="3">III</option>
+                                    <option value="4">IV</option>
+                                    <option value="5">V</option>
+                                </select>
+                            </label>
+                            <label class="me-3 form-label w-25">
+                                POSITION
+                                <input type="range" class="form-range" min="0" max="26" id="position-2" required>
+                            </label>
+                            <label class="me-3 form-label w-25">
+                                RING
+                                <input type="range" class="form-range" min="0" max="26" id="ring-2" required>
+                            </label>
+                        </div>
+                        <div class="input-group mx-auto w-50 border-bottom">
+                            <label class="me-3 form-label">
+                                ROTOR 3
+                                <select class="form-select rounded-0" id="rotor-3" required>
+                                    <option value="1">I</option>
+                                    <option value="2">II</option>
+                                    <option value="3">III</option>
+                                    <option value="4">IV</option>
+                                    <option value="5">V</option>
+                                </select>
+                            </label>
+                            <label class="me-3 form-label w-25">
+                                POSITION
+                                <input type="range" class="form-range" min="0" max="26" id="position-3" required>
+                            </label>
+                            <label class="me-3 form-label w-25">
+                                RING
+                                <input type="range" class="form-range" min="0" max="26" id="ring-3" required>
+                            </label>
+                        </div>
+                        <div class="input-group mx-auto w-50">
+                            <label>
+                                PLUGBOARD
+                                <input type="text" class="form-control rounded-0" id="plugboard" required>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label">
+                            TEXT
+                            <textarea class="form-control" id="text" rows="12" required></textarea>
+                        </label>
+                    </div>
+                </div>
+                <div class="mx-auto">
+                    <input type="submit" class="btn btn-outline-light rounded-0 mt-3" value="Encode">
+                </div>
+            </form>
+        </div>
+    {% else %}
+        {#        <div id="index_content" class="font-raleway text-center">#}
+        {#            <div class="d-flex justify-content-center">#}
+        {#                <button id="btn_rip" onclick="recover()"#}
+        {#                        type="button" class="btn btn-outline-light rounded-0 fs-5 w-25">Tentare il#}
+        {#                    ripristino?#}
+        {#                </button>#}
+        {#            </div>#}
+        {#        </div>#}
+    {% endif %}
+{% endblock %}
+{% block script %}
+    <script>
+        let typer_index = 0,
+            txt = '{{ get_flashed_messages()[0] }}',
+            speed = 50;
+        let body = document.querySelector('body'),
+            pbar = document.querySelector('#progressbar'),
+            bar = document.querySelector('#progress-bar'),
+            counter = document.querySelector('#counter'),
+            btn_ripristino = document.querySelector('#btn_rip'),
+            files = document.querySelector('#files_rip'),
+            i = 0,
+            show_counter = true,
+            throttle = 0.875; // 0-1
+        let xfish_set = false;
+
+        function typeWriter(txt) {
+            if (typer_index < txt.length) {
+                document.getElementById("messages").innerHTML += txt.charAt(typer_index);
+                typer_index++;
+                setTimeout(typeWriter, speed, txt);
+            }
+        }
+
+        function typeNewMessage(message) {
+            document.getElementById("messages").innerHTML = '';
+            typer_index = 0;
+            typeWriter(message);
+        }
+
+        function showDownloadIcon() {
+            bar.classList.toggle('invisible');
+            pbar.classList.toggle('invisible');
+            let download = document.querySelector('#download2');
+            download.innerHTML = "<a href='{{ url_for('static', filename='files/secret.bin')}}' download><svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='white' class='bi bi-cloud-arrow-down zoom_icon' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M7.646 10.854a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 9.293V5.5a.5.5 0 0 0-1 0v3.793L6.354 8.146a.5.5 0 1 0-.708.708z'/><path d='M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z'/></svg></a>";
+        }
+
+        function recover() {
+            btn_ripristino.classList.toggle('invisible');
+            setTimeout(typeNewMessage, 800, "Tentativo di ripristino dei file.");
+            show_counter = true;
+            let file0 = document.querySelector('#ripristinato0');
+            let file1 = document.querySelector('#ripristinato1');
+            file0.classList.toggle('invisible');
+            file1.classList.toggle('invisible');
+            bar = document.querySelector('#progress-bar2');
+            counter = document.querySelector('#progress-bar2');
+            pbar = document.querySelector('#progressbar2');
+            bar.classList.toggle('invisible');
+            pbar.classList.toggle('invisible');
+            i = 0;
+            draw();
+            setTimeout(showDownloadIcon, 5000);
+            setTimeout(typeNewMessage, 5000, "Ripristino concluso.");
+        }
+
+        function showResult() {
+            pbar.classList.toggle('invisible');
+            bar.classList.toggle('invisible');
+            if (!counter.classList.contains('invisible')) {
+                counter.classList.toggle('invisible');
+            }
+            btn_ripristino.classList.toggle('invisible');
+            files.classList.toggle('invisible');
+            typeNewMessage("Elenco file danneggiati.");
+        }
+
+        (function start() {
+            typeWriter(txt);
+            setTimeout(showResult, 5000)
+        })();
+
+        function xfish(admin) {
+            if (admin && !xfish_set) {
+                xfish_set = true;
+                let secret = document.querySelector('#xfish');
+                secret.classList.toggle('invisible');
+                let content = document.querySelector('#index_content');
+                content.classList.toggle('invisible');
+                if (!counter.classList.contains('invisible')) {
+                    let counter = document.querySelector('#counter');
+                    counter.classList.toggle('invisible');
+                }
+            }
+        }
+    </script>
+{% endblock %}

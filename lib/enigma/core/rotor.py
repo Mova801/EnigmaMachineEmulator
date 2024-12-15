@@ -1,5 +1,4 @@
 import enum
-
 from typing import Self
 
 from ..models import rotors_models as models

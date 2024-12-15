@@ -1,14 +1,11 @@
-# Script created by Marte on 09/12/2023
-from rich.traceback import install
+from app import create_app
 
-from src.cmdapplication import CmdApplication
-
-install()  # better looking error print
+app = create_app()
 
 
 def main() -> None:
-    app = CmdApplication()
-    app.run()
+    app.run(debug=True)
+    # app.run()
 
 
 if __name__ == '__main__':
